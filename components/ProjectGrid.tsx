@@ -22,7 +22,7 @@ export const ProjectGrid: React.FC<ProjectGridProps> = ({ projects, isLoading })
   if (projects.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-64 text-slate-500">
-        <p className="font-serif text-lg italic">No projects found in this realm.</p>
+        <p className="text-lg font-light">No projects found in this realm.</p>
       </div>
     );
   }

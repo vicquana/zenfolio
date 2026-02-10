@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { ProjectData } from '../types';
 import { GlassCard } from './ui/GlassCard';
 import { cleanUrl, timeAgo } from '../utils/formatters';
-import { ExternalLink, Circle, GitBranch } from 'lucide-react';
+import { ExternalLink, Circle, Layers } from 'lucide-react';
 
 interface ProjectCardProps {
   project: ProjectData;
@@ -59,30 +59,31 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
       </div>
 
       {/* Content Area */}
-      <div className="p-5 flex flex-col flex-grow justify-between">
+      <div className="p-5 flex flex-col flex-grow justify-between relative z-20">
         <div>
           <div className="flex justify-between items-start mb-2">
-            <h3 className="font-semibold text-slate-100 tracking-tight text-lg group-hover:text-white transition-colors">
+            <h3 className="font-semibold text-slate-100 tracking-tight text-lg transition-all duration-300 group-hover:text-white group-hover:origin-left group-hover:scale-[1.02] group-hover:[text-shadow:0_0_20px_rgba(255,255,255,0.4)]">
               {project.name}
             </h3>
-            <div className={`p-1.5 rounded-full bg-slate-800/50 border border-white/5 ${statusColor}`}>
+            <div className={`p-1.5 rounded-full bg-slate-800/50 border border-white/5 ${statusColor} group-hover:border-white/10 transition-colors duration-300`}>
                <Circle size={8} fill="currentColor" className={project.status === 'BUILDING' ? 'animate-pulse' : ''} />
             </div>
           </div>
           
-          <p className="text-slate-500 text-xs font-mono mb-4 flex items-center gap-1.5 truncate">
+          <p className="text-slate-500 text-xs font-mono mb-4 flex items-center gap-1.5 truncate transition-all duration-300 group-hover:text-slate-300 group-hover:origin-left group-hover:scale-[1.02]">
             <ExternalLink size={10} />
             {cleanUrl(project.url)}
           </p>
         </div>
 
-        <div className="flex items-center justify-between pt-4 border-t border-white/5 mt-2">
+        <div className="flex items-center justify-between pt-4 border-t border-white/5 mt-2 group-hover:border-white/10 transition-colors duration-300">
           <div className="flex items-center gap-2">
-            <span className="px-2 py-0.5 rounded-md bg-slate-800/50 text-[10px] text-slate-400 border border-white/5 font-medium uppercase tracking-wider">
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-800/40 border border-white/5 text-[10px] font-medium uppercase tracking-wider text-slate-400 group-hover:bg-slate-800/80 group-hover:text-slate-200 group-hover:border-white/10 transition-all duration-300 transform group-hover:scale-105 origin-left">
+              <Layers size={10} strokeWidth={2.5} className="opacity-70" />
               {project.framework}
-            </span>
+            </div>
           </div>
-          <span className="text-xs text-slate-600 font-medium">
+          <span className="text-xs text-slate-600 font-medium transition-all duration-300 group-hover:text-slate-400 group-hover:scale-105 origin-right">
             {timeAgo(project.updatedAt)}
           </span>
         </div>

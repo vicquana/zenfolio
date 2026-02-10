@@ -28,7 +28,7 @@ export const TokenGate: React.FC<TokenGateProps> = ({ onConnect, onDemo, error }
           <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-slate-800/50 text-slate-300 border border-white/10 mb-6">
             <KeyRound size={20} />
           </div>
-          <h2 className="font-serif text-3xl text-slate-100 mb-3 tracking-wide">Enter the Gate</h2>
+          <h2 className="text-3xl text-slate-100 mb-3 tracking-tight font-light">Enter the Gate</h2>
           <p className="text-slate-500 text-sm leading-relaxed">
             Connect your Vercel Read-Only Token to visualize your digital creations.
           </p>
