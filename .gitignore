@@ -28,3 +28,4 @@ dist-ssr
 *.sw?
 
 scripts/vercel-projects.snapshot.json
+.env*.local
