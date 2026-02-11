@@ -1,41 +1,48 @@
 import { ProjectData } from './types';
 
-export const MOCK_PROJECTS: ProjectData[] = [
+export interface CuratedProject extends ProjectData {
+  featured: boolean;
+}
+
+// Curated source list from your Vercel account.
+// Set `featured: true` only for projects you want in the public portfolio.
+export const ALL_VERCEL_PROJECTS: CuratedProject[] = [
   {
-    id: 'proj_1',
+    id: 'vercel_zen_garden_analytics',
     name: 'zen-garden-analytics',
-    url: 'vercel.com', 
+    url: 'https://zen-garden-analytics.vercel.app',
     updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
     framework: 'Next.js',
-    status: 'READY'
+    status: 'READY',
+    featured: true
   },
   {
-    id: 'proj_2',
+    id: 'vercel_mono_repo_dashboard',
     name: 'mono-repo-dashboard',
-    url: 'nextjs.org',
+    url: 'https://mono-repo-dashboard.vercel.app',
     updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
     framework: 'React',
-    status: 'READY'
+    status: 'READY',
+    featured: true
   },
   {
-    id: 'proj_3',
+    id: 'vercel_linear_clone_v2',
     name: 'linear-clone-v2',
-    url: 'linear.app',
+    url: 'https://linear-clone-v2.vercel.app',
     updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString(),
     framework: 'Vue.js',
-    status: 'BUILDING'
+    status: 'BUILDING',
+    featured: false
   },
   {
-    id: 'proj_4',
+    id: 'vercel_hyper_commerce',
     name: 'hyper-commerce',
-    url: 'supa-b.com',
+    url: 'https://hyper-commerce.vercel.app',
     updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 120).toISOString(),
     framework: 'Svelte',
-    status: 'ERROR'
+    status: 'ERROR',
+    featured: false
   }
 ];
 
-export const SHIMMER_ANIMATION = {
-  hidden: { opacity: 0 },
-  show: { opacity: 1, transition: { duration: 0.5 } }
-};
+export const PORTFOLIO_PROJECTS: ProjectData[] = ALL_VERCEL_PROJECTS.filter((project) => project.featured);

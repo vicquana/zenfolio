@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import React from 'react';
 import { ProjectData } from '../types';
 import { GlassCard } from './ui/GlassCard';
 import { cleanUrl, timeAgo } from '../utils/formatters';
@@ -11,8 +10,7 @@ interface ProjectCardProps {
 }
 
 export const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
-  const [imageLoaded, setImageLoaded] = useState(false);
-  const screenshotUrl = `https://api.microlink.io?url=${encodeURIComponent(project.url)}&screenshot=true&meta=false&embed=screenshot.url&viewport.width=1280&viewport.height=800`;
+  const hasProjectUrl = Boolean(project.url);
 
   const statusColor = {
     READY: 'text-emerald-400',
@@ -30,31 +28,25 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
       transition={{ duration: 0.5, delay: index * 0.05 }}
     >
       {/* Visual Preview Area */}
-      <div className="relative aspect-video w-full overflow-hidden border-b border-white/5 bg-slate-950/50">
-        {/* Loading Shimmer */}
-        {!imageLoaded && (
-          <div className="absolute inset-0 animate-pulse bg-slate-800/50" />
-        )}
-        
-        <motion.img
-          src={screenshotUrl}
-          alt={`${project.name} preview`}
-          className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105"
-          onLoad={() => setImageLoaded(true)}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: imageLoaded ? 1 : 0 }}
-        />
+      <div className="relative aspect-video w-full overflow-hidden border-b border-white/5 bg-gradient-to-br from-slate-900/80 via-slate-850/40 to-slate-950">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.08),transparent_45%)]" />
+        <div className="relative z-10 h-full w-full flex flex-col items-start justify-end p-4">
+          <p className="text-[11px] uppercase tracking-widest text-slate-500">Project</p>
+          <p className="text-sm text-slate-200 font-medium truncate w-full">{project.name}</p>
+        </div>
 
         {/* Overlay Action */}
         <div className="absolute inset-0 bg-slate-950/0 group-hover:bg-slate-950/40 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
-           <a 
-            href={project.url} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="px-4 py-2 bg-white text-slate-950 rounded-full font-medium text-sm flex items-center gap-2 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300 shadow-xl shadow-white/5"
-           >
-             Visit Site <ExternalLink size={14} />
-           </a>
+           {hasProjectUrl && (
+             <a 
+              href={project.url} 
+              target="_blank" 
+              rel="noopener noreferrer nofollow"
+              className="px-4 py-2 bg-white text-slate-950 rounded-full font-medium text-sm flex items-center gap-2 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300 shadow-xl shadow-white/5"
+             >
+               Visit Site <ExternalLink size={14} />
+             </a>
+           )}
         </div>
       </div>
 
@@ -72,7 +64,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
           
           <p className="text-slate-500 text-xs font-mono mb-4 flex items-center gap-1.5 truncate transition-all duration-300 group-hover:text-slate-300 group-hover:origin-left group-hover:scale-[1.02]">
             <ExternalLink size={10} />
-            {cleanUrl(project.url)}
+            {hasProjectUrl ? cleanUrl(project.url) : 'No deployment URL'}
           </p>
         </div>
 
