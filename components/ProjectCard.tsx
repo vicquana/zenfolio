@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import { ProjectData } from '../types';
 import { GlassCard } from './ui/GlassCard';
 import { cleanUrl, timeAgo } from '../utils/formatters';
@@ -10,6 +10,7 @@ interface ProjectCardProps {
 }
 
 export const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
+  const [previewFailed, setPreviewFailed] = useState(false);
   const normalizedProjectUrl = (() => {
     if (!project.url) return null;
     const candidate = project.url.startsWith('http') ? project.url : `https://${project.url}`;
@@ -20,6 +21,11 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
     }
   })();
   const hasProjectUrl = Boolean(normalizedProjectUrl);
+  const previewImageUrl = useMemo(() => {
+    if (!normalizedProjectUrl) return null;
+    return `https://image.thum.io/get/width/1200/crop/675/noanimate/${normalizedProjectUrl}`;
+  }, [normalizedProjectUrl]);
+
   const openProject = () => {
     if (!normalizedProjectUrl) return;
     window.open(normalizedProjectUrl, '_blank', 'noopener,noreferrer');
@@ -55,13 +61,19 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
     >
       {/* Visual Preview Area */}
       <div className="relative aspect-video w-full overflow-hidden border-b border-white/5 bg-gradient-to-br from-slate-900/80 via-slate-850/40 to-slate-950">
-        {hasProjectUrl ? (
-          <iframe
-            src={normalizedProjectUrl!}
-            title={`${project.name} live preview`}
+        {hasProjectUrl && previewImageUrl && !previewFailed ? (
+          <img
+            src={previewImageUrl}
+            alt={`${project.name} preview`}
             loading="lazy"
-            className="absolute inset-0 h-full w-full border-0 pointer-events-none opacity-75 transition-transform duration-500 group-hover:scale-105"
+            className="absolute inset-0 h-full w-full object-cover opacity-80 transition-transform duration-500 group-hover:scale-105"
+            onError={() => setPreviewFailed(true)}
           />
+        ) : null}
+        {hasProjectUrl && previewFailed ? (
+          <div className="absolute inset-0 flex items-center justify-center bg-slate-900/80 px-4 text-center">
+            <span className="text-xs text-slate-300 font-mono">Preview unavailable. Click to open site.</span>
+          </div>
         ) : null}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.08),transparent_45%)]" />
         <div className="relative z-10 h-full w-full flex flex-col items-start justify-end p-4">
