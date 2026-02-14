@@ -10,7 +10,19 @@ interface ProjectCardProps {
 }
 
 export const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
-  const hasProjectUrl = Boolean(project.url);
+  const normalizedProjectUrl = (() => {
+    if (!project.url) return null;
+    const candidate = project.url.startsWith('http') ? project.url : `https://${project.url}`;
+    try {
+      return new URL(candidate).toString();
+    } catch {
+      return null;
+    }
+  })();
+  const hasProjectUrl = Boolean(normalizedProjectUrl);
+  const previewImageUrl = hasProjectUrl
+    ? `https://image.thum.io/get/width/1200/noanimate/${encodeURIComponent(normalizedProjectUrl)}`
+    : null;
 
   const statusColor = {
     READY: 'text-emerald-400',
@@ -29,6 +41,14 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
     >
       {/* Visual Preview Area */}
       <div className="relative aspect-video w-full overflow-hidden border-b border-white/5 bg-gradient-to-br from-slate-900/80 via-slate-850/40 to-slate-950">
+        {previewImageUrl ? (
+          <img
+            src={previewImageUrl}
+            alt={`${project.name} preview`}
+            loading="lazy"
+            className="absolute inset-0 h-full w-full object-cover opacity-80 transition-transform duration-500 group-hover:scale-105"
+          />
+        ) : null}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.08),transparent_45%)]" />
         <div className="relative z-10 h-full w-full flex flex-col items-start justify-end p-4">
           <p className="text-[11px] uppercase tracking-widest text-slate-500">Project</p>
@@ -39,7 +59,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
         <div className="absolute inset-0 bg-slate-950/0 group-hover:bg-slate-950/40 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
            {hasProjectUrl && (
              <a 
-              href={project.url} 
+              href={normalizedProjectUrl!} 
               target="_blank" 
               rel="noopener noreferrer nofollow"
               className="px-4 py-2 bg-white text-slate-950 rounded-full font-medium text-sm flex items-center gap-2 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300 shadow-xl shadow-white/5"
@@ -64,7 +84,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
           
           <p className="text-slate-500 text-xs font-mono mb-4 flex items-center gap-1.5 truncate transition-all duration-300 group-hover:text-slate-300 group-hover:origin-left group-hover:scale-[1.02]">
             <ExternalLink size={10} />
-            {hasProjectUrl ? cleanUrl(project.url) : 'No deployment URL'}
+            {hasProjectUrl ? cleanUrl(normalizedProjectUrl!) : 'No deployment URL'}
           </p>
         </div>
 
@@ -75,9 +95,21 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
               {project.framework}
             </div>
           </div>
-          <span className="text-xs text-slate-600 font-medium transition-all duration-300 group-hover:text-slate-400 group-hover:scale-105 origin-right">
-            {timeAgo(project.updatedAt)}
-          </span>
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-slate-600 font-medium transition-all duration-300 group-hover:text-slate-400 group-hover:scale-105 origin-right">
+              {timeAgo(project.updatedAt)}
+            </span>
+            {hasProjectUrl ? (
+              <a
+                href={normalizedProjectUrl!}
+                target="_blank"
+                rel="noopener noreferrer nofollow"
+                className="text-xs text-slate-300 hover:text-white underline underline-offset-4 transition-colors"
+              >
+                Visit site
+              </a>
+            ) : null}
+          </div>
         </div>
       </div>
     </GlassCard>
