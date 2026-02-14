@@ -1,5 +1,7 @@
 import { ProjectData } from "./types";
 
+type CuratedProject = ProjectData & { featured: boolean };
+
 // Public projects only.
 export const ALL_VERCEL_PROJECTS: CuratedProject[] = [
   {
@@ -165,3 +167,7 @@ export const ALL_VERCEL_PROJECTS: CuratedProject[] = [
     featured: false,
   },
 ];
+
+export const PORTFOLIO_PROJECTS: ProjectData[] = ALL_VERCEL_PROJECTS
+  .filter((project) => project.featured)
+  .map(({ featured: _featured, ...project }) => project);
