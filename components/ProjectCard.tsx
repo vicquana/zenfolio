@@ -20,9 +20,10 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
     }
   })();
   const hasProjectUrl = Boolean(normalizedProjectUrl);
-  const previewImageUrl = hasProjectUrl
-    ? `https://image.thum.io/get/width/1200/noanimate/${encodeURIComponent(normalizedProjectUrl)}`
-    : null;
+  const openProject = () => {
+    if (!normalizedProjectUrl) return;
+    window.open(normalizedProjectUrl, '_blank', 'noopener,noreferrer');
+  };
 
   const statusColor = {
     READY: 'text-emerald-400',
@@ -34,19 +35,32 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
   return (
     <GlassCard
       hoverEffect={true}
-      className="group flex flex-col h-full"
+      className={`group flex flex-col h-full ${hasProjectUrl ? 'cursor-pointer' : ''}`}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: index * 0.05 }}
+      onClick={hasProjectUrl ? openProject : undefined}
+      onKeyDown={
+        hasProjectUrl
+          ? (event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                openProject();
+              }
+            }
+          : undefined
+      }
+      role={hasProjectUrl ? 'link' : undefined}
+      tabIndex={hasProjectUrl ? 0 : undefined}
     >
       {/* Visual Preview Area */}
       <div className="relative aspect-video w-full overflow-hidden border-b border-white/5 bg-gradient-to-br from-slate-900/80 via-slate-850/40 to-slate-950">
-        {previewImageUrl ? (
-          <img
-            src={previewImageUrl}
-            alt={`${project.name} preview`}
+        {hasProjectUrl ? (
+          <iframe
+            src={normalizedProjectUrl!}
+            title={`${project.name} live preview`}
             loading="lazy"
-            className="absolute inset-0 h-full w-full object-cover opacity-80 transition-transform duration-500 group-hover:scale-105"
+            className="absolute inset-0 h-full w-full border-0 pointer-events-none opacity-75 transition-transform duration-500 group-hover:scale-105"
           />
         ) : null}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.08),transparent_45%)]" />
@@ -58,14 +72,11 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
         {/* Overlay Action */}
         <div className="absolute inset-0 bg-slate-950/0 group-hover:bg-slate-950/40 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
            {hasProjectUrl && (
-             <a 
-              href={normalizedProjectUrl!} 
-              target="_blank" 
-              rel="noopener noreferrer nofollow"
+             <span
               className="px-4 py-2 bg-white text-slate-950 rounded-full font-medium text-sm flex items-center gap-2 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300 shadow-xl shadow-white/5"
              >
                Visit Site <ExternalLink size={14} />
-             </a>
+             </span>
            )}
         </div>
       </div>
@@ -100,14 +111,9 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
               {timeAgo(project.updatedAt)}
             </span>
             {hasProjectUrl ? (
-              <a
-                href={normalizedProjectUrl!}
-                target="_blank"
-                rel="noopener noreferrer nofollow"
-                className="text-xs text-slate-300 hover:text-white underline underline-offset-4 transition-colors"
-              >
+              <span className="text-xs text-slate-300 underline underline-offset-4 transition-colors">
                 Visit site
-              </a>
+              </span>
             ) : null}
           </div>
         </div>
